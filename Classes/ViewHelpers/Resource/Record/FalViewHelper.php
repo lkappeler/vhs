@@ -177,7 +177,7 @@ class FalViewHelper extends AbstractRecordResourceViewHelper
       if ($record['_PAGES_OVERLAY']) {
         $field = '_PAGES_OVERLAY_UID';
       } else {
-        $field = parent::getField();
+        $field = 'uid';
       }
 
       return $field;
@@ -188,10 +188,10 @@ class FalViewHelper extends AbstractRecordResourceViewHelper
      * @return string        tablename
      */
     public function getTableLocalized($record) {
+      $table = parent::getTable();
+
       if ($record['_PAGES_OVERLAY']) {
-        $table = 'pages_language_overlay';
-      } else {
-        $table = parent::getTable();
+        $table = $table . '_language_overlay';
       }
 
       return $table;
