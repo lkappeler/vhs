@@ -106,8 +106,7 @@ class FalViewHelper extends AbstractRecordResourceViewHelper
         if (isset($record['t3ver_oid']) && (integer) $record['t3ver_oid'] !== 0) {
             $sqlRecordUid = $record['t3ver_oid'];
         } else {
-            $this->idField = $this->getIdFieldLocalized($record);
-            $sqlRecordUid = $record[$this->idField];
+            $sqlRecordUid = $record[$this->getIdFieldLocalized($record)];
         }
 
         $fileReferences = [];
