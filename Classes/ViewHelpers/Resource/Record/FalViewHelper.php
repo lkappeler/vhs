@@ -106,12 +106,13 @@ class FalViewHelper extends AbstractRecordResourceViewHelper
         if (isset($record['t3ver_oid']) && (integer) $record['t3ver_oid'] !== 0) {
             $sqlRecordUid = $record['t3ver_oid'];
         } else {
+            $this->idField = $this->getIdFieldLocalized($record);
             $sqlRecordUid = $record[$this->idField];
         }
 
         $fileReferences = [];
         if (empty($GLOBALS['TSFE']->sys_page) === false) {
-            $fileReferences = $this->getFileReferences($this->getTable(), $this->getField(), $sqlRecordUid);
+            $fileReferences = $this->getFileReferences($this->getTableLocalized($record), $this->getField(), $sqlRecordUid);
         } else {
             if ($GLOBALS['BE_USER']->workspaceRec['uid']) {
                 $versionWhere = 'AND sys_file_reference.deleted=0 AND (sys_file_reference.t3ver_wsid=0 OR ' .
@@ -124,7 +125,7 @@ class FalViewHelper extends AbstractRecordResourceViewHelper
             $references = $databaseConnection->exec_SELECTgetRows(
                 'uid',
                 'sys_file_reference',
-                'tablenames=' . $databaseConnection->fullQuoteStr($this->getTable(), 'sys_file_reference') .
+                'tablenames=' . $databaseConnection->fullQuoteStr($this->getTableLocalized($record), 'sys_file_reference') .
                     ' AND uid_foreign=' . (int) $sqlRecordUid .
                     ' AND fieldname=' . $databaseConnection->fullQuoteStr($this->getField(), 'sys_file_reference')
                     . $versionWhere,
@@ -166,5 +167,33 @@ class FalViewHelper extends AbstractRecordResourceViewHelper
     protected function getDatabaseConnection()
     {
         return $GLOBALS['TYPO3_DB'];
+    }
+
+    /**
+     * @param  array $record  the given page to get the id field for
+     * @return string         id filed
+     */
+    public function getIdFieldLocalized($record) {
+      if ($record['_PAGES_OVERLAY']) {
+        $field = '_PAGES_OVERLAY_UID';
+      } else {
+        $field = parent::getField();
+      }
+
+      return $field;
+    }
+
+    /**
+     * @param  array $record  the given page to get the tabelname for
+     * @return string        tablename
+     */
+    public function getTableLocalized($record) {
+      if ($record['_PAGES_OVERLAY']) {
+        $table = 'pages_language_overlay';
+      } else {
+        $table = parent::getTable();
+      }
+
+      return $table;
     }
 }
